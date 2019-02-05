@@ -16,12 +16,12 @@ let make = (_children) => {
                     <input type_="text" className="form-control" id="lastNameInput" placeholder="Enter last name"/>
                   </div>
                   <div className="form-group">
-                    <label htmlFor="exampleInputEmail1">(ReasonReact.string("Email address"))</label>
-                    <input type_="email" className="form-control" id="exampleInputEmail1" placeholder="Enter email"/>
+                    <label htmlFor="inputMail">(ReasonReact.string("Email address"))</label>
+                    <input type_="email" className="form-control" id="inputMail" placeholder="Enter email"/>
                   </div>
                   <div className="form-group">
-                    <label htmlFor="exampleInputPassword1">(ReasonReact.string("Password"))</label>
-                    <input type_="password" className="form-control" id="exampleInputPassword1" placeholder="Password"/>
+                    <label htmlFor="inputPwd">(ReasonReact.string("Password"))</label>
+                    <input type_="password" className="form-control" id="inputPwd" placeholder="Password"/>
                   </div>
                   <button type_="submit" className="btn btn-primary">(ReasonReact.string("Submit"))</button>
                 </form>

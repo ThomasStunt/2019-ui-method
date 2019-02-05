@@ -5,7 +5,7 @@ module App = {
     render: _self =>
         <div>
             <Header />
-            <Register />
+            <Login />
         </div>
     };
 };
