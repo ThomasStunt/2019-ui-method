@@ -1,7 +1,8 @@
 open Extractor;
 open Session;
 
-let url_dev = "http://localhost:8080/";
+let url = "https://app-3895ccd8-bdf5-4169-85d6-63c1f6b70406.cleverapps.io/";
+
 type state = {
   email: string,
   password: string,
@@ -12,7 +13,7 @@ type action =
   | UpdatePassword(string)
   | Login
   | Loading
-  | LoadedUsers
+  | UserLoaded
   | Ok;
 
 let log = state => {
@@ -22,7 +23,7 @@ let log = state => {
   Js.Dict.set(currentUsr, "email", Js.Json.string(state.email));
   Js.Promise.(
     Fetch.fetchWithInit(
-      "http://localhost:8080/api/v1/users/login",
+      url ++ "/api/v1/users/login",
       Fetch.RequestInit.make(
         ~method_=Post,
         ~body=Fetch.BodyInit.make(Js.Json.stringify(Js.Json.object_(currentUsr))),
@@ -52,7 +53,7 @@ let make = _children => {
             log(state)
             |> then_(result =>
                  switch (result) {
-                 | Some(user) => resolve(self.send(LoadedUsers))
+                 | Some(user) => resolve(self.send(UserLoaded))
                  | None => resolve()
                  }
                )
@@ -60,34 +61,45 @@ let make = _children => {
             |> ignore
           ),
       )
-    | LoadedUsers => ReasonReact.SideEffects(_ => ReasonReact.Router.push("score"))
+    | UserLoaded => ReasonReact.SideEffects(_ => ReasonReact.Router.push("score"))
     | _ => ReasonReact.NoUpdate
     },
   render: _self =>
     <div>
-      <h1> {ReasonReact.string("Login")} </h1>
-      <form>
-        <label>
-          {ReasonReact.string("Login : ")}
-          <input
-            type_="text"
-            name="inputLogin"
-            value={_self.state.email}
-            onChange={event => _self.send(UpdateLogin(ReactEvent.Form.target(event)##value))}
-          />
-        </label>
+      <Header />
+      <div className="container">
         <br />
-        <label>
-          {ReasonReact.string("Password : ")}
-          <input
-            type_="text"
-            name="inputPwd"
-            value={_self.state.password}
-            onChange={event => _self.send(UpdatePassword(ReactEvent.Form.target(event)##value))}
-          />
-        </label>
-        <br />
-      </form>
-      <button onClick={_ => _self.send({Login})}> {ReasonReact.string("Log in")} </button>
+        <form>
+          <br />
+          <div className="form-group">
+            <label htmlFor="exampleInputEmail1"> {ReasonReact.string("Email address")} </label>
+            <input
+              type_="text"
+              name="inputMail"
+              className="form-control"
+              value={_self.state.email}
+              placeholder="Email address"
+              onChange={event => _self.send(UpdateLogin(ReactEvent.Form.target(event)##value))}
+            />
+            <small id="emailHelp" className="form-text text-muted">
+              {ReasonReact.string("We'll never share your infos with anyone else.")}
+            </small>
+          </div>
+          <div className="form-group">
+            <label htmlFor="exampleInputPassword1"> {ReasonReact.string("Password")} </label>
+            <input
+              type_="text"
+              name="inputPwd"
+              className="form-control"
+              value={_self.state.password}
+              placeholder="Password"
+              onChange={event => _self.send(UpdatePassword(ReactEvent.Form.target(event)##value))}
+            />
+          </div>
+          <button onClick={_ => _self.send({Login})} className="btn btn-primary">
+            {ReasonReact.string("Connect")}
+          </button>
+        </form>
+      </div>
     </div>,
 };

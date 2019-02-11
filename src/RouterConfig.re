@@ -7,9 +7,10 @@ module Config = {
   type route = page;
   let url_to_route = (url: ReasonReact.Router.url) =>
     switch (url.path) {
+    | ["login"] => Login
     | ["register"] => Register
     | ["score"] => Score
-    | _ => Login
+    | _ => Register
     };
   let route_to_url = route =>
     switch (route) {
@@ -42,9 +43,8 @@ let make = _children => {
        | Login => <Login />
        | Register => <Register />
        | Score => <Score />
+       | _ => <Register />
        }}
-      <a href="login"> {ReasonReact.string("Login")} </a>
-      <a href="register"> {ReasonReact.string("register")} </a>
     </div>;
   },
 };

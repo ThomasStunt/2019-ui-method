@@ -31,7 +31,7 @@ let readResponse = json => {
     Json.Decode.{
       success: json |> field("success", bool),
       token: json |> field("token", string),
-      profile: json |> field("profile", decodeProfile),
+      profile: json |> field("profile", readProfile),
       message: json |> field("message", string),
     };
   Session.saveTok(json.token);
