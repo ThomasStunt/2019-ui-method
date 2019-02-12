@@ -1,6 +1,3 @@
-open Extractor;
-open Session;
-
 type state = {
   email: string,
   password: string,
@@ -10,8 +7,7 @@ type action =
   | UpdateLogin(string)
   | UpdatePassword(string)
   | Login
-  | Loading
-  | UserLoaded
+  | UserLogged
   | Ok;
 
 let log = state => {
@@ -21,14 +17,14 @@ let log = state => {
   Js.Dict.set(currentUsr, "email", Js.Json.string(state.email));
   Js.Promise.(
     Fetch.fetchWithInit(
-      "https://cors-anywhere.herokuapp.com/http://app-3895ccd8-bdf5-4169-85d6-63c1f6b70406.cleverapps.io/api/v1/users/login",
+      Const.baseUrl() ++ "/api/v1/users/login",
       Fetch.RequestInit.make(
         ~method_=Post,
         ~body=Fetch.BodyInit.make(Js.Json.stringify(Js.Json.object_(currentUsr))),
         ~headers=
           Fetch.HeadersInit.make({
             "Content-Type": "application/json",
-            "Origin": "http://app-3895ccd8-bdf5-4169-85d6-63c1f6b70406.cleverapps.io/api/v1/users/login",
+            "Origin": "https://app-3895ccd8-bdf5-4169-85d6-63c1f6b70406.cleverapps.io/api/v1/users/login",
           }),
         (),
       ),
@@ -55,15 +51,14 @@ let make = _children => {
             log(state)
             |> then_(result =>
                  switch (result) {
-                 | Some(user) => resolve(self.send(UserLoaded))
-                 | None => resolve()
+                 | _ => resolve(self.send(UserLogged))
                  }
                )
-            |> catch(_err => Js.Promise.resolve())
+            |> catch(_err => Js.Promise.resolve(self.send(UserLogged)))
             |> ignore
           ),
       )
-    | UserLoaded => ReasonReact.SideEffects(_ => ReasonReact.Router.push("score"))
+    | UserLogged => ReasonReact.SideEffects(_ => ReasonReact.Router.push("score"))
     | _ => ReasonReact.NoUpdate
     },
   render: _self =>
