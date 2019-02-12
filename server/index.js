@@ -5,7 +5,7 @@ const compression = require('compression');
 const helmet = require('helmet');
 
 const app = express();
-const PORT = process.env.PORT || 1234;
+const PORT = process.env.PORT || 8080;
 const DIST = path.join(__dirname, '..', 'dist');
 
 app.enable('trust proxy');
