@@ -1,8 +1,6 @@
 open Extractor;
 open Session;
 
-let url = "https://app-3895ccd8-bdf5-4169-85d6-63c1f6b70406.cleverapps.io/";
-
 type state = {
   email: string,
   password: string,
@@ -23,11 +21,15 @@ let log = state => {
   Js.Dict.set(currentUsr, "email", Js.Json.string(state.email));
   Js.Promise.(
     Fetch.fetchWithInit(
-      url ++ "/api/v1/users/login",
+      "https://cors-anywhere.herokuapp.com/http://app-3895ccd8-bdf5-4169-85d6-63c1f6b70406.cleverapps.io/api/v1/users/login",
       Fetch.RequestInit.make(
         ~method_=Post,
         ~body=Fetch.BodyInit.make(Js.Json.stringify(Js.Json.object_(currentUsr))),
-        ~headers=Fetch.HeadersInit.make({"Content-Type": "application/json"}),
+        ~headers=
+          Fetch.HeadersInit.make({
+            "Content-Type": "application/json",
+            "Origin": "http://app-3895ccd8-bdf5-4169-85d6-63c1f6b70406.cleverapps.io/api/v1/users/login",
+          }),
         (),
       ),
     )
@@ -88,7 +90,7 @@ let make = _children => {
           <div className="form-group">
             <label htmlFor="exampleInputPassword1"> {ReasonReact.string("Password")} </label>
             <input
-              type_="text"
+              type_="password"
               name="inputPwd"
               className="form-control"
               value={_self.state.password}
@@ -96,10 +98,10 @@ let make = _children => {
               onChange={event => _self.send(UpdatePassword(ReactEvent.Form.target(event)##value))}
             />
           </div>
-          <button onClick={_ => _self.send({Login})} className="btn btn-primary">
-            {ReasonReact.string("Connect")}
-          </button>
         </form>
+        <button onClick={_ => _self.send({Login})} className="btn btn-primary">
+          {ReasonReact.string("Connect")}
+        </button>
       </div>
     </div>,
 };

@@ -1,7 +1,5 @@
 open Extractor;
 
-let url = "https://app-3895ccd8-bdf5-4169-85d6-63c1f6b70406.cleverapps.io/";
-
 type state = {
   email: string,
   password: string,
@@ -22,11 +20,15 @@ let register = state => {
   Js.Dict.set(currentUsr, "password", Js.Json.string(state.password));
   Js.Promise.(
     Fetch.fetchWithInit(
-      url ++ "/api/v1/users/",
+      "https://cors-anywhere.herokuapp.com/http://app-3895ccd8-bdf5-4169-85d6-63c1f6b70406.cleverapps.io/api/v1/users/",
       Fetch.RequestInit.make(
         ~method_=Post,
         ~body=Fetch.BodyInit.make(Js.Json.stringify(Js.Json.object_(currentUsr))),
-        ~headers=Fetch.HeadersInit.make({"Content-Type": "application/json"}),
+        ~headers=
+          Fetch.HeadersInit.make({
+            "Content-Type": "application/json",
+            "Origin": "http://app-3895ccd8-bdf5-4169-85d6-63c1f6b70406.cleverapps.io/api/v1/users/login",
+          }),
         (),
       ),
     )
@@ -51,7 +53,7 @@ let make = _children => {
             |> then_(result =>
                  switch (result) {
                  | Some(user) => resolve(self.send(RegisteredUser))
-                 | None => resolve(self.send(Error))
+                 | None => resolve()
                  }
                )
             |> catch(_err => Js.Promise.resolve())
@@ -102,10 +104,10 @@ let make = _children => {
               placeholder="Password"
             />
           </div>
-          <button type_="submit" onClick={_ => _self.send({Register})} className="btn btn-primary">
-            {ReasonReact.string("Submit")}
-          </button>
         </form>
+        <button onClick={_ => _self.send({Register})} className="btn btn-primary">
+          {ReasonReact.string("Submit")}
+        </button>
       </div>
     </div>;
   },
